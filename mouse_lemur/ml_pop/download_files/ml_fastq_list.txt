@@ -1,0 +1,37 @@
+# tav
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/000/SRR8456520/SRR8456520_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/000/SRR8456520/SRR8456520_2.fastq.gz
+
+# ravelobensis
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/002/SRR8456522/SRR8456522_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/002/SRR8456522/SRR8456522_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/007/SRR8456527/SRR8456527_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/007/SRR8456527/SRR8456527_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/008/SRR8456518/SRR8456518_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/008/SRR8456518/SRR8456518_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/008/SRR8456528/SRR8456528_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/008/SRR8456528/SRR8456528_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/000/SRR8456530/SRR8456530_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/000/SRR8456530/SRR8456530_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/009/SRR8456519/SRR8456519_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/009/SRR8456519/SRR8456519_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/006/SRR8456526/SRR8456526_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/006/SRR8456526/SRR8456526_2.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/009/SRR8456529/SRR8456529_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/009/SRR8456529/SRR8456529_2.fastq.gz
+
+# gris
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/004/SRR8456524/SRR8456524_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/004/SRR8456524/SRR8456524_2.fastq.gz
+
+# lehil
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/005/SRR8456525/SRR8456525_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/005/SRR8456525/SRR8456525_2.fastq.gz
+
+# jonahi
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/003/SRR8456523/SRR8456523_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/003/SRR8456523/SRR8456523_2.fastq.gz
+
+# zaza
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/001/SRR8456521/SRR8456521_1.fastq.gz
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR845/001/SRR8456521/SRR8456521_2.fastq.gz
