@@ -1,0 +1,124 @@
+---
+title: "Downloading Read Files using SRAtoolkit"
+author:
+    name: An Nguyen
+format: 
+  html:
+      code-overflow: wrap
+      embed-resources: true
+date: "Last Updated: 01 October 2026"
+editor: visual
+---
+
+### Introduction
+
+This tutorial is for downloading read files (`.fastq`) using SRA Toolkit from NCBI. SRA stands for the Sequencing Read Archive and it houses sequencing data. They actually have pretty good [documentation](https://github.com/ncbi/sra-tools/wiki) so I'll reference it for parts of this; however, it might be helpful to have it written out in full in case the process is confusing.
+
+::: callout-note
+This tutorial assumes you have access to Seawulf and a basic understanding of the cluster. If you don't... change that!
+:::
+
+In this tutorial, I'll reference files from `PRJNA512515`:
+
+Hunnicutt KE, Tiley GP, Williams RC, et al. [Comparative Genomic Analysis of the Pheromone Receptor Class 1 Family (V1R) Reveals Extreme Complexity in Mouse Lemurs (Genus, Microcebus) and a Chromosomal Hotspot across Mammals](https://europepmc.org/article/MED/31555816#sec3). Genome Biology and Evolution. 2020 Jan;12(1):3562-3579. DOI: 10.1093/gbe/evz200. PMID: 31555816; PMCID: PMC6944220.
+
+### 1. Finding your read files
+
+Let's say you've read a paper and want to play around with their data. Papers are required to publish their data *somewhere*, and you can find (what is usually) their SRA accession numbers somewhere in their Methods or Supplementary Data. There are a couple of different types of accession numbers, but if you have any one of the following, it's usually pretty easy to find your FASTQ files:
+
+| Accession Type | Abbreviation | What it is |
+|------------------------|------------------------|------------------------|
+| Sample/Project | PRJ | Tells you about the (Bio)project and it's subsequent data. Letters afterwards (`PRJNA`) can indicate where the data was originally submitted. |
+| Sample | SAMN | Tells you about the (Bio)sample the data was taken from (e.g: tissue or sex of the organism). |
+| Experiment | SRX | Tells you about the specific experiment. |
+| Run | SRR | Tells you about the specific run. |
+
+To find your data, I like to use the European Nucleotide Archive (ENA) because their site is a little bit easier to peruse through. I prefer to search by Project Number. If the data has published reads, you can go to the column under the right. Under the "Read Files" widget, you'll see a list of reads. You'll know you've found the right data as long as there's downloadable `.fastq.gz` files alongside Run Accession numbers.
+
+For the next couple of steps, you'll need to pull the Run Accession numbers. If you're only getting one dataset – great! Easy to copy and paste. If you're getting any more than five or so, I would recommend downloading the TSV report, opening it in Excel, and pulling the Run Accession numbers that way.
+
+::: callout-note
+If you're planning only downloading one or two files, I would just recommend using `wget` to download everything. You can either (a) copy the link to the files (should start with `ftp://ftp.sra.ebi.ac.uk/...`) and write `wget -nc <link>` or (b) select the files you want to download and press the "Get download script" button and copy the output. Just make sure to submit it as a job because it kind of takes a while...
+:::
+
+### 2. Install SRA Toolkit
+
+You can follow the [documentation](https://github.com/ncbi/sra-tools/wiki) for this part. For more Seawulf specific tips, I would recommend unpacking it in `home` so you have it on hand down the line. You'll also need to perform the `export PATH` function every time you open a new Seawulf session and plan to use it. There's probably a way around this but I'm not that savvy...
+
+I also unpacked mine in an Anaconda environment to keep it kosher. Up to you whether you want to do that.
+
+The functions we'll need from SRA Toolkit are `fasterq-dump` and `prefetch`. Again, you can read the documentation for that because it's pretty straightforward.
+
+### 3. Automating
+
+I find it to be a bit annoying to have to manually download each file using two functions. Yes, I could include a bunch of accession numbers in the functions, but that feels a bit nerve-wracking in the event something goes wrong and a bit inelegant for when I have more than 10 accession numbers (imagine if I had 50!). Instead, I wrote a script that loops through a `.txt` file with your accession numbers and performs the two functions for each accession.
+
+First, with the accession numbers you pulled from Excel (or however you wanted to do it), copy and paste them into a `.txt` file. Below is a brief example:
+
+```         
+SRR10130788
+SRR8456520
+SRR10130790
+SRR8456524
+```
+
+I saved this as `ml_accession_list.txt`. I wrote this in a text editor program and then transferred the file into Seawulf. You can also use `nano` to write out a file, which may actually save you some problems down the line.
+
+Then you'll want to submit the job script. Below is an example of my script. Of course, you'll replace anything specific to me with what you need!
+
+``` shell
+#!/bin/bash
+
+#SBATCH --job-name=getml_sra
+#SBATCH --ntasks-per-node=28
+#SBATCH --nodes=2
+#SBATCH --time=12:00:00
+#SBATCH -p long-40core
+#SBATCH --output=%j.getml_sra.out
+#SBATCH --error=%j.getml_sra.error
+
+cd $SLURM_SUBMIT_DIR
+
+module purge
+module load anaconda/3
+conda activate mouse_lemur
+
+export PATH=$PWD/sratoolkit.3.4.1-ubuntu64/bin:$PATH
+
+sed -i 's/\r$//' ml_accession_list.txt
+
+i=$(cat ml_accession_list.txt)
+for i in $i
+do
+	prefetch $i --max-size u -O /gpfs/scratch/nguyen6/ml_reads
+	fasterq-dump $i -O /gpfs/scratch/nguyen6/ml_reads/"$i"
+done
+```
+
+Here's a breakdown of what the script is:
+
+-   The shebang line
+
+-   The `#SBATCH` lines: You can play around with the time you need and the queue you want to use, depending on the estimated time of your downloads. Since mine are larger files and plan to take a while to download, I've opted for a longer queue.
+
+-   `cd $SLURM_SUBMIT_DIR`: Just tells Slurm to perform the script from the directory you submitted it from, rather than defining a specific directory to go to.
+
+-   I unpacked SRA Toolkit in an Anaconda environment, hence the `module load anaconda/3` and such. If you didn't, these lines can be omitted.
+
+-   `export PATH...`: Don't know why you need to do this every time. Maybe you're better at Shell scripting and Linux so you don't, but if you're like me, it's easier to just include it in the script. Otherwise, it'll say the functions can't be found.
+
+-   `sed -i...`: This is to remove any hidden line break characters like `\r` that come when you write a `.txt` file in Windows. If you did `nano`, you may not have to do this (better safe than sorry, though).
+
+-   `i=$(cat ...)`: This sets `i` to be your file. The choice in letter is arbitrary. You could do `badabingbadaboom=$(cat ...)` and it would work.
+
+-   The loop
+
+    -   As I type this, I now realized I wrote `for every i in $i` in my loop, which is a little bit funky but it's fine... Basically, for every object/line in your specified file, `do`...
+
+    -   `prefetch $i –max-size u -O /gpfs/scratch/nguyen6/ml_reads/`: Performs the `prefetch` function with the data size limit set to unlimited (u). Initially when I ran it, I added `"$i"` after `ml_reads` because I'd wanted to put everything in a separate folder, but then I realized it already makes a folder in `ml_reads`...
+
+    -   `fasterq-dump $i -O /path/to/wherever/"$i"` : Performs the `fasterq-dump` function. Again, I made the output under a specified path, but I've now added the `"$i"` to indicate I want to put my files into the newly created directory.
+
+    -   `done`!
+
+### And that's it :-)
