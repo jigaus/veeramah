@@ -6,7 +6,8 @@ format:
   html:
       code-overflow: wrap
       embed-resources: true
-date: "Last Updated: 01 October 2026"
+date: last-modified
+date-format: "[Last Updated on] DD MMMM, YYYY"
 editor: visual
 ---
 
